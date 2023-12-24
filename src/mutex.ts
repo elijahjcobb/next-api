@@ -6,11 +6,15 @@ if (!url) throw new Error("Cannot find `KV_URL` environment variable.");
 
 const redis = new Redis(url);
 
+export function createMutex(identifier: string): Mutex {
+  return new Mutex(redis, `mutex:${identifier}`);
+}
+
 export async function withMutex<T>(
   identifier: string,
   fn: () => Promise<T>
 ): Promise<T> {
-  const mutex = new Mutex(redis, `mutex:${identifier}`);
+  const mutex = createMutex(identifier);
   await mutex.acquire();
   try {
     return await fn();

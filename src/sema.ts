@@ -6,12 +6,16 @@ if (!url) throw new Error("Cannot find `KV_URL` environment variable.");
 
 const redis = new Redis(url);
 
-export async function withSemaphore<T>(
+export function createSema(identifier: string, limit: number): Semaphore {
+  return new Semaphore(redis, `semaphore:${identifier}`, limit);
+}
+
+export async function withSema<T>(
   identifier: string,
   limit: number,
   fn: () => Promise<T>
 ): Promise<T> {
-  const semaphore = new Semaphore(redis, `semaphore:${identifier}`, limit);
+  const semaphore = createSema(identifier, limit);
   await semaphore.acquire();
   try {
     return await fn();

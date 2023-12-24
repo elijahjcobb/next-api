@@ -1,6 +1,6 @@
 import { compare, hash } from "bcrypt";
 
-const SALT_ITERATION = 10;
+const SALT_ITERATION = 32;
 
 export async function createPassword(rawPassword: string): Promise<string> {
   return await hash(rawPassword, SALT_ITERATION);

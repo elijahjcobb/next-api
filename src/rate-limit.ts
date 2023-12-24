@@ -1,8 +1,7 @@
 import { Ratelimit } from "@upstash/ratelimit";
 import { kv } from "@vercel/kv";
 import { APIError } from "./api-error";
-
-export type RateLimitWindow = `${number}${"s" | "ms" | "m" | "h" | "d"}`;
+import type { TimeString } from "./time-string";
 
 export async function rateLimit({
   endpoint,
@@ -13,7 +12,7 @@ export async function rateLimit({
   endpoint: string;
   identifier: string;
   tokens: number;
-  window: RateLimitWindow;
+  window: TimeString;
 }): Promise<void> {
   const r = new Ratelimit({
     redis: kv,

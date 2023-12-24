@@ -1,37 +1,36 @@
-import { z } from "zod";
+import { ZodIssue } from "zod";
 
-const apiErrorDataSchema = z.object({
-  code: z.string(),
-  message: z.string(),
-  statusCode: z.number(),
-});
-
-export function isAPIError(value: unknown): value is APIError {
-  return apiErrorDataSchema.safeParse(value).success;
+export interface APIErrorData {
+  code: string;
+  message: string;
+  statusCode: number;
+  types?: ZodIssue[];
 }
-
-export type APIErrorData = z.infer<typeof apiErrorDataSchema>;
 
 export class APIError extends Error {
   public readonly code: string;
   public readonly statusCode: number;
   public readonly error?: unknown;
+  public readonly types?: ZodIssue[];
 
   public constructor({
     code,
     message,
     statusCode,
     error,
+    types,
   }: {
     message: string;
     code: string;
     statusCode: number;
     error?: unknown;
+    types?: ZodIssue[];
   }) {
     super(message);
     this.code = code;
     this.statusCode = statusCode;
     this.error = error;
+    this.types = types;
   }
 
   public toJSON(): APIErrorData {
@@ -39,6 +38,7 @@ export class APIError extends Error {
       code: this.code,
       message: this.message,
       statusCode: this.statusCode,
+      types: this.types,
     };
   }
 

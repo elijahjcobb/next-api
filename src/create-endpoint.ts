@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { APIError } from "./api-error";
-import { type RateLimitWindow, rateLimit } from "./rate-limit";
+import { rateLimit } from "./rate-limit";
+import { createSema } from "./sema";
+import { Semaphore } from "redis-semaphore";
+import type { TimeString } from "./time-string";
 
 export type Handler = (
   req: NextRequest,
@@ -9,10 +12,11 @@ export type Handler = (
 
 export interface EndpointOptions {
   rateLimit?: {
-    window: RateLimitWindow;
+    window: TimeString;
     tokens: number;
     disable?: boolean;
   };
+  concurrencyLimit?: number;
 }
 
 export function createEndpoint(
@@ -26,6 +30,7 @@ export function createEndpoint(
     req: NextRequest,
     meta: { params: Record<string, string> }
   ): Promise<NextResponse> => {
+    let sema: Semaphore | undefined;
     try {
       try {
         const getParam = (param?: string): string => {
@@ -39,22 +44,29 @@ export function createEndpoint(
             });
           return value;
         };
+        const userIdentifier =
+          req.cookies.get("token")?.value ??
+          req.headers.get("authorization") ??
+          "default";
+        const endpointIdentifier = `${req.method}-${req.nextUrl.pathname}`;
         if (options?.rateLimit?.disable !== true) {
           await rateLimit({
-            endpoint: `${req.method}-${req.nextUrl.pathname}`,
-            identifier:
-              req.cookies.get("authorization")?.value ??
-              req.headers.get("x-real-ip") ??
-              req.ip ??
-              "unknown",
+            endpoint: endpointIdentifier,
+            identifier: userIdentifier,
             tokens: options?.rateLimit?.tokens ?? 100,
             window: options?.rateLimit?.window ?? "1m",
           });
+        }
+        if (options?.concurrencyLimit) {
+          sema = createSema(endpointIdentifier, options.concurrencyLimit);
+          await sema.acquire();
         }
         return await handler(req, getParam);
       } catch (e) {
         // handle custom errors here
         throw e;
+      } finally {
+        if (sema) await sema.release();
       }
     } catch (e) {
       let error: APIError;
