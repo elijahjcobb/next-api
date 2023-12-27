@@ -1,8 +1,8 @@
-import { hash } from "bcrypt";
 import { totp } from "otplib";
 import { kv } from "@vercel/kv";
 import { randomBytes } from "crypto";
 import { APIError } from "./api-error";
+import { hash } from "bcryptjs";
 
 const TOKEN_TIMING = 360;
 const TOKEN_WINDOW = 2;
