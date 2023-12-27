@@ -1,12 +1,13 @@
 import { Semaphore } from "redis-semaphore";
-import { kv } from "@vercel/kv";
+import Redis from "ioredis";
 
 const url = process.env.KV_URL;
 if (!url) throw new Error("Cannot find `KV_URL` environment variable.");
 
+const redis = new Redis(url);
+
 export function createSema(identifier: string, limit: number): Semaphore {
-  // @ts-expect-error - ignore the type error
-  return new Semaphore(kv, `semaphore:${identifier}`, limit);
+  return new Semaphore(redis, `semaphore:${identifier}`, limit);
 }
 
 export async function withSema<T>(
