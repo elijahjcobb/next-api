@@ -30,7 +30,7 @@ function kvKeyForIdentifier(identifier: string): string {
   return `totp-salt-${identifier}`;
 }
 
-export async function createTOTPForSMS({
+export async function totpCreate({
   identifier,
 }: {
   identifier: string;
@@ -43,7 +43,7 @@ export async function createTOTPForSMS({
   return totp.generate(secret);
 }
 
-export async function verifyTOTPForSMS({
+export async function totpVerify({
   identifier,
   code,
 }: {
