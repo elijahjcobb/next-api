@@ -1,4 +1,5 @@
 export * from "./api-error";
+export * from "./cache";
 export * from "./create-endpoint";
 export * from "./hash";
 export * from "./mutex";
