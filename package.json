@@ -1,6 +1,6 @@
 {
   "name": "@elijahjcobb/next-api",
-  "version": "0.1.8",
+  "version": "0.1.10",
   "access": "public",
   "scripts": {
     "test": "jest",
@@ -11,6 +11,7 @@
   "files": [
     "build"
   ],
+  "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {
     "@types/bcrypt": "^5.0.2",
