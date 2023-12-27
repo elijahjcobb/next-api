@@ -1,6 +1,6 @@
 {
   "name": "@elijahjcobb/next-api",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "access": "public",
   "scripts": {
     "test": "jest",
@@ -14,11 +14,11 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {
-    "@types/bcrypt": "^5.0.2",
+    "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.5",
     "@upstash/ratelimit": "^1.0.0",
     "@vercel/kv": "^1.0.1",
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "ioredis": "^5.3.2",
     "jsonwebtoken": "^9.0.2",
     "next": "14.0.4",
