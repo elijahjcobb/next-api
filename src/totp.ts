@@ -2,6 +2,7 @@ import { hash } from "bcrypt";
 import { totp } from "otplib";
 import { kv } from "@vercel/kv";
 import { randomBytes } from "crypto";
+import { APIError } from "./api-error";
 
 const TOKEN_TIMING = 360;
 const TOKEN_WINDOW = 2;
@@ -59,4 +60,20 @@ export async function totpVerify({
   } catch {
     return false;
   }
+}
+
+export async function totpAssert({
+  identifier,
+  code,
+}: {
+  identifier: string;
+  code: string;
+}): Promise<void> {
+  const valid = await totpVerify({ identifier, code });
+  if (!valid)
+    throw new APIError({
+      statusCode: 401,
+      message: "Incorrect OTP.",
+      code: "incorrect_totp_token",
+    });
 }
