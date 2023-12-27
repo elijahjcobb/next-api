@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { APIError, APIErrorData } from "./api-error";
 import { rateLimit } from "./rate-limit";
 import { createSema } from "./sema";
-import { Semaphore } from "redis-semaphore";
+import type { Semaphore } from "redis-semaphore";
 import type { TimeString } from "./time-string";
 
 export type Handler<T> = (
@@ -69,6 +69,7 @@ export function createEndpoint<T>(
         if (sema) await sema.release();
       }
     } catch (e) {
+      console.error(e);
       let error: APIError;
       if (e instanceof APIError) {
         error = e;

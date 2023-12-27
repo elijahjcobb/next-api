@@ -4,7 +4,7 @@ import Redis from "ioredis";
 const url = process.env.KV_URL;
 if (!url) throw new Error("Cannot find `KV_URL` environment variable.");
 
-const redis = new Redis(url);
+const redis = new Redis(url, { tls: {} });
 
 export function createSema(identifier: string, limit: number): Semaphore {
   return new Semaphore(redis, `semaphore:${identifier}`, limit);

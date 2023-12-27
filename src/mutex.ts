@@ -4,7 +4,7 @@ import { Mutex } from "redis-semaphore";
 const url = process.env.KV_URL;
 if (!url) throw new Error("Cannot find `KV_URL` environment variable.");
 
-const redis = new Redis(url);
+const redis = new Redis(url, { tls: {} });
 
 export function createMutex(identifier: string): Mutex {
   return new Mutex(redis, `mutex:${identifier}`);
