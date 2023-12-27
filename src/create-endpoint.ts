@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { APIError } from "./api-error";
+import { APIError, APIErrorData } from "./api-error";
 import { rateLimit } from "./rate-limit";
 import { createSema } from "./sema";
 import { Semaphore } from "redis-semaphore";
 import type { TimeString } from "./time-string";
 
-export type Handler = (
+export type Handler<T> = (
   req: NextRequest,
   getParam: (param?: string) => string
-) => Promise<NextResponse>;
+) => Promise<NextResponse<T>>;
 
 export interface EndpointOptions {
   rateLimit?: {
@@ -19,17 +19,17 @@ export interface EndpointOptions {
   concurrencyLimit?: number;
 }
 
-export function createEndpoint(
-  handler: Handler,
+export function createEndpoint<T>(
+  handler: Handler<T>,
   options?: EndpointOptions
 ): (
   req: NextRequest,
   meta: { params: Record<string, string> }
-) => Promise<NextResponse> {
+) => Promise<NextResponse<T | APIErrorData>> {
   return async (
     req: NextRequest,
     meta: { params: Record<string, string> }
-  ): Promise<NextResponse> => {
+  ): Promise<NextResponse<T | APIErrorData>> => {
     let sema: Semaphore | undefined;
     try {
       try {
