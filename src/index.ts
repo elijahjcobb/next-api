@@ -2,6 +2,7 @@ export * from "./api-error";
 export * from "./create-endpoint";
 export * from "./hash";
 export * from "./mutex";
+export * from "./no-throw";
 export * from "./password";
 export * from "./rate-limit";
 export * from "./sema";
