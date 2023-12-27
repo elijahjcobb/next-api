@@ -1,6 +1,7 @@
 {
   "name": "@elijahjcobb/next-api",
   "version": "0.1.2",
+  "access": "public",
   "scripts": {
     "test": "jest",
     "build": "tsc --project tsconfig.json",
