@@ -1,7 +1,8 @@
 import { totp } from "otplib";
 import { kv } from "@vercel/kv";
 import { APIError } from "./api-error";
-import { hash, genSalt } from "bcrypt";
+import { hashPassword } from "./password";
+import { randomBytes } from "crypto";
 
 const TOKEN_TIMING = 360;
 const TOKEN_WINDOW = 2;
@@ -25,7 +26,7 @@ async function generateSecret({
   identifier: string;
   salt: string;
 }): Promise<string> {
-  return await hash(`${SECRET}${identifier}`, salt);
+  return await hashPassword(`${SECRET}${identifier}`, salt);
 }
 
 export async function totpCreate({
@@ -33,7 +34,7 @@ export async function totpCreate({
 }: {
   identifier: string;
 }): Promise<string> {
-  const salt = await genSalt();
+  const salt = randomBytes(16).toString("hex");
   const secret = await generateSecret({ identifier, salt });
   await kv.set(kvKeyForIdentifier(identifier), salt, {
     ex: TOKEN_TIMING * TOKEN_WINDOW,
