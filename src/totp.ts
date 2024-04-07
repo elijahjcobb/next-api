@@ -1,7 +1,7 @@
 import { totp } from "otplib";
 import { kv } from "@vercel/kv";
 import { APIError } from "./api-error";
-import { hash, genSalt } from "bcryptjs";
+import { hash, genSalt } from "bcrypt";
 
 const TOKEN_TIMING = 360;
 const TOKEN_WINDOW = 2;

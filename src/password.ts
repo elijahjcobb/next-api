@@ -1,4 +1,4 @@
-import { compare, hash } from "bcryptjs";
+import { compare, hash } from "bcrypt";
 
 const SALT_ITERATION = 32;
 
